@@ -18,6 +18,7 @@ public class Order implements Serializable {
     private int ordercount;
     private double orderprice;
     private String username;
+    private boolean isoutofstock;
 
     public int getOid() {
         return oid;
@@ -67,6 +68,14 @@ public class Order implements Serializable {
         this.username = username;
     }
 
+    public boolean isIsoutofstock() {
+        return isoutofstock;
+    }
+
+    public void setIsoutofstock(boolean isoutofstock) {
+        this.isoutofstock = isoutofstock;
+    }
+
     public static ArrayList<Order> getListOrderByUsername(String username) {
         ArrayList<Order> resultOrder = new ArrayList<>();
         try {
@@ -86,6 +95,7 @@ public class Order implements Serializable {
                 order.setOrdername(result.getString("ordername"));
                 order.setOrderprice(result.getDouble("orderprice"));
                 order.setOrdertime(result.getDate("ordertime"));
+                order.setIsoutofstock(result.getInt("isoutofstock") == 1);
 
                 resultOrder.add(order);
             }

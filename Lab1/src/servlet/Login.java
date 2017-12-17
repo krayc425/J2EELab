@@ -24,10 +24,12 @@ public class Login extends HttpServlet {
             // Look through all the cookies and see if the
             // cookie with the login info is there.
 
-            login = Arrays.stream(cookies).filter(
-                    cookie -> cookie.getName().equals("LoginCookie")
-            ).findFirst().orElseGet(null).getValue();
-
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("LoginCookie")) {
+                    login = cookie.getValue();
+                    break;
+                }
+            }
         }
 
         // Logout action removes session, but the cookie remains

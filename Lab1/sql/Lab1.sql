@@ -17,6 +17,7 @@ create table `order`
 	ordercount int not null,
 	orderprice double not null,
 	username varchar(255) not null,
+	isoutofstock tinyint(1) default '0' not null,
 	constraint order_myuser_username_fk
 		foreign key (username) references j2eelab.myuser (username)
 			on update cascade on delete cascade
@@ -33,10 +34,10 @@ INSERT INTO J2EELab.myuser (username, password) VALUES ('zgq', 'zgq');
 INSERT INTO J2EELab.myuser (username, password) VALUES ('zyz', 'zyz');
 INSERT INTO J2EELab.myuser (username, password) VALUES ('zzc', 'zzc');
 
-INSERT INTO J2EELab.`order` (ordertime, ordername, ordercount, orderprice, username) VALUES ('2017-12-13 20:44:15', 'Apple', 123, 123.12, 'skx');
-INSERT INTO J2EELab.`order` (ordertime, ordername, ordercount, orderprice, username) VALUES ('2017-06-13 18:44:36', 'Orange', 64, 234.62, 'zzc');
-INSERT INTO J2EELab.`order` (ordertime, ordername, ordercount, orderprice, username) VALUES ('2017-08-16 20:45:24', 'Banana', 8, 30.2, 'skx');
-INSERT INTO J2EELab.`order` (ordertime, ordername, ordercount, orderprice, username) VALUES ('2016-06-16 23:45:36', 'Watermelon', 421, 888.49, 'szs');
-INSERT INTO J2EELab.`order` (ordertime, ordername, ordercount, orderprice, username) VALUES ('2016-09-19 16:48:19', 'Peach', 451, 999.21, 'zyz');
-INSERT INTO J2EELab.`order` (ordertime, ordername, ordercount, orderprice, username) VALUES ('2017-10-03 17:53:55', 'Pear', 23, 145.67, 'szs');
-INSERT INTO J2EELab.`order` (ordertime, ordername, ordercount, orderprice, username) VALUES ('2014-08-28 01:49:16', 'Lemon', 99, 467.83, 'skx');
+INSERT INTO J2EELab.`order` (ordertime, ordername, ordercount, orderprice, username, isoutofstock) VALUES ('2017-12-13 20:44:15', 'Apple', 123, 123.12, 'skx', 0);
+INSERT INTO J2EELab.`order` (ordertime, ordername, ordercount, orderprice, username, isoutofstock) VALUES ('2017-06-13 18:44:36', 'Orange', 64, 234.62, 'zzc', 0);
+INSERT INTO J2EELab.`order` (ordertime, ordername, ordercount, orderprice, username, isoutofstock) VALUES ('2017-08-16 20:45:24', 'Banana', 8, 30.2, 'skx', 1);
+INSERT INTO J2EELab.`order` (ordertime, ordername, ordercount, orderprice, username, isoutofstock) VALUES ('2016-06-16 23:45:36', 'Watermelon', 421, 888.49, 'szs', 0);
+INSERT INTO J2EELab.`order` (ordertime, ordername, ordercount, orderprice, username, isoutofstock) VALUES ('2016-09-19 16:48:19', 'Peach', 451, 999.21, 'zyz', 0);
+INSERT INTO J2EELab.`order` (ordertime, ordername, ordercount, orderprice, username, isoutofstock) VALUES ('2017-10-03 17:53:55', 'Pear', 23, 145.67, 'szs', 0);
+INSERT INTO J2EELab.`order` (ordertime, ordername, ordercount, orderprice, username, isoutofstock) VALUES ('2014-08-28 01:49:16', 'Lemon', 99, 467.83, 'skx', 0);

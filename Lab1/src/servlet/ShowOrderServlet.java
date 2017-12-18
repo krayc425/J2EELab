@@ -1,5 +1,6 @@
 package servlet;
 
+import com.sun.tools.corba.se.idl.constExpr.Or;
 import model.Order;
 import model.User;
 
@@ -9,10 +10,15 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 @WebServlet("/ShowOrderServlet")
 public class ShowOrderServlet extends HttpServlet {
+
+    private int currentPage = 1;
+
+    public ShowOrderServlet() {
+        super();
+    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         processRequest(request, response);
@@ -23,6 +29,9 @@ public class ShowOrderServlet extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setContentType("text/html;charset=utf-8");
+        req.setCharacterEncoding("UTF-8");
+
         HttpSession session = req.getSession(false);
 
         Cookie cookie = null;
@@ -98,14 +107,18 @@ public class ShowOrderServlet extends HttpServlet {
     }
 
     private void setOrderListPage(HttpServletRequest req, HttpServletResponse res, User user) {
-        ArrayList<Order> orders = Order.getListOrderByUsername(user.getUsername());
-
         try {
-            if (orders.stream().anyMatch(
-                    Order::isIsoutofstock
-            )) {
-                displayOutOfStockPage(req, res);
+            int outOfStockCount = Order.getOutOfStockOrderCount(user.getUsername());
+            if (outOfStockCount > 0) {
+                displayOutOfStockPage(req, res, outOfStockCount);
             } else {
+                displayCountPage(req, res, Order.getListOrderPageCountByUsername(user.getUsername()));
+
+                currentPage = Integer.parseInt(req.getParameter("page"));
+
+                System.out.println("Current page: " + currentPage);
+
+                ArrayList<Order> orders = Order.getListOrderByUsernameAndPage(user.getUsername(), currentPage);
                 req.setAttribute("list", orders);
 
                 displayOrderListPage(req, res);
@@ -113,6 +126,18 @@ public class ShowOrderServlet extends HttpServlet {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void displayCountPage(HttpServletRequest req, HttpServletResponse res, int count) throws IOException {
+        PrintWriter out = res.getWriter();
+        out.println("<p>");
+
+        int i = 0;
+        while (i <= count) {
+            out.print("<a href='" + res.encodeURL(req.getContextPath() + "/ShowOrderServlet?page=") + (i + 1)
+                    + "'> " + (i + 1) + " </a>");
+            i++;
         }
     }
 
@@ -137,22 +162,21 @@ public class ShowOrderServlet extends HttpServlet {
         if (null != session) {
             System.out.println("session is not null, reseting");
             session.invalidate();
-            session = null;
         }
     }
 
-    private void displayOutOfStockPage(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    private void displayOutOfStockPage(HttpServletRequest req, HttpServletResponse res, long outOfStockCount) throws IOException {
         PrintWriter out = res.getWriter();
         out.println("<html><body>");
-        out.println("<p>You have at least 1 out-of-stock order!</p>");
+        out.println("<p>You have " + outOfStockCount + " out-of-stock order"
+                + (outOfStockCount > 1 ? "s" : "") + "!</p>");
         out.println("<input type='button' name='Back' value='Back' onclick='javascript:history.back()'>");
         out.println("</body></html>");
-        
+
         HttpSession session = req.getSession();
         if (null != session) {
             System.out.println("session is not null, reseting");
             session.invalidate();
-            session = null;
         }
     }
 
@@ -161,19 +185,29 @@ public class ShowOrderServlet extends HttpServlet {
 
         PrintWriter out = res.getWriter();
         out.println("<html><body>");
-        out.println("<table width='650' border='0' >");
-        out.println("<tr>");
-        out.println("<td width='650' height='80' background='" + req.getContextPath() + "/image/top.jpg'></td>");
-        out.println("</tr>");
-        out.println("</table>");
         out.println("<p>Welcome " + req.getAttribute("username") + "</p>");
-
-        out.println("My Order List:  ");
+        out.println("<p>Your Order List: </p><table>");
+        out.println("<tr>");
+        out.println("<td>" + "Id" + "</td>");
+        out.println("<td>" + "Time" + "</td>");
+        out.println("<td>" + "Name " + "</td>");
+        out.println("<td>" + "Count" + "</td>");
+        out.println("<td>" + "Price" + "</td>");
+        out.println("</tr>");
 
         list.forEach(
-                o -> out.println(o.getOid())
+                o -> {
+                    out.println("<tr>");
+                    out.println("<td>" + o.getOid() + "</td>");
+                    out.println("<td>" + o.getOrdertime() + "</td>");
+                    out.println("<td>" + o.getOrdername() + "</td>");
+                    out.println("<td>" + o.getOrdercount() + "</td>");
+                    out.println("<td>" + o.getOrderprice() + "</td>");
+                    out.println("</tr>");
+                }
         );
-        out.println("</p>");
+
+        out.println("</table></p>");
 
         out.println("Click <a href='" + res.encodeURL(req.getRequestURI()) + "'>here</a> to reload this page.<br>");
     }

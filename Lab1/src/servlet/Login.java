@@ -2,7 +2,6 @@ package servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
@@ -14,16 +13,22 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/Login")
 public class Login extends HttpServlet {
 
+    public Login() {
+        super();
+    }
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String login = "";
         HttpSession session = request.getSession(false);
+        // Logout action removes session, but the cookie remains
+        if (session != null) {
+            session.invalidate();
+        }
 
         Cookie[] cookies = request.getCookies();
-
         if (null != cookies) {
             // Look through all the cookies and see if the
             // cookie with the login info is there.
-
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("LoginCookie")) {
                     login = cookie.getValue();
@@ -32,19 +37,11 @@ public class Login extends HttpServlet {
             }
         }
 
-        // Logout action removes session, but the cookie remains
-        if (null != request.getParameter("Logout")) {
-            if (null != session) {
-                session.invalidate();
-                session = null;
-            }
-        }
-
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
         out.println("<html><body>");
         out.println("<form method='POST' action='"
-                + response.encodeURL(request.getContextPath() + "/ShowOrderServlet")
+                + response.encodeURL(request.getContextPath() + "/ShowOrderServlet?page=1")
                 + "'>");
         out.println("login: <input type='text' name='username' value='" + login + "'>");
         out.println("password: <input type='password' name='password' value=''>");

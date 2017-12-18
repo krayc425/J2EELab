@@ -12,6 +12,8 @@ import java.util.Date;
 
 public class Order implements Serializable {
 
+    private static int PAGE_SIZE = 2;
+
     private int oid;
     private Date ordertime;
     private String ordername;
@@ -76,14 +78,65 @@ public class Order implements Serializable {
         this.isoutofstock = isoutofstock;
     }
 
-    public static ArrayList<Order> getListOrderByUsername(String username) {
+    public static int getOutOfStockOrderCount(String username) {
+        int count = 0;
+        try {
+            //获取数据
+            Connection connection = DatabaseConnection.getConnection();
+            String sql = "SELECT COUNT(*) FROM `order` WHERE username = ? AND isoutofstock = 1";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, username);
+
+            ResultSet result = stmt.executeQuery();
+
+            if (result.next()) {
+                count = result.getInt(1);
+            }
+
+            //关闭连接
+            DatabaseConnection.close(result, stmt, connection);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return count;
+    }
+
+    public static int getListOrderPageCountByUsername(String username) {
+        int count = -1;
+
+        try {
+            //获取数据
+            Connection connection = DatabaseConnection.getConnection();
+            String sql = "SELECT COUNT(*) FROM `order` WHERE username = ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, username);
+
+            ResultSet result = stmt.executeQuery();
+
+            if (result.next()) {
+                count = result.getInt(1);
+            }
+
+            //关闭连接
+            DatabaseConnection.close(result, stmt, connection);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return count / PAGE_SIZE;
+    }
+
+    public static ArrayList<Order> getListOrderByUsernameAndPage(String username, int page) {
         ArrayList<Order> resultOrder = new ArrayList<>();
         try {
             //获取数据
             Connection connection = DatabaseConnection.getConnection();
-            String sql = "SELECT * FROM `order` WHERE username = ?";
+            String sql = "SELECT * FROM `order` WHERE username = ? LIMIT ?, ?";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, username);
+            stmt.setInt(2, (page - 1) * PAGE_SIZE);
+            stmt.setInt(3, PAGE_SIZE);
 
             ResultSet result = stmt.executeQuery();
 

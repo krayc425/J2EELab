@@ -17,7 +17,6 @@ public class Reset extends HttpServlet {
         if (null != session) {
             System.out.println("session is not null, reseting");
             session.invalidate();
-            session = null;
         }
     }
 }

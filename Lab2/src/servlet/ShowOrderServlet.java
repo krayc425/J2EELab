@@ -4,6 +4,7 @@ import com.sun.tools.corba.se.idl.constExpr.Or;
 import model.Order;
 import model.User;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -61,6 +62,9 @@ public class ShowOrderServlet extends HttpServlet {
                 User user = User.getUser(usernameValue, passwordValue);
 
                 if (user != null) {
+                    // 登陆成功，人数+1
+                    this.increaseCounter();
+
                     if (cookie != null) { // If the cookie exists update the value only
                         // if changed
                         if (!usernameValue.equals(cookie.getValue())) {
@@ -70,7 +74,7 @@ public class ShowOrderServlet extends HttpServlet {
                     } else {
                         // If the cookie does not exist, create it and set value
                         cookie = new Cookie("LoginCookie", usernameValue);
-                        cookie.setMaxAge(Integer.MAX_VALUE);
+                        cookie.setMaxAge(0);
                         System.out.println("Add cookie");
                         resp.addCookie(cookie);
                     }
@@ -82,6 +86,7 @@ public class ShowOrderServlet extends HttpServlet {
 
                     req.setAttribute("username", usernameValue);
                     req.setAttribute("password", passwordValue);
+
 
                     setOrderListPage(req, resp, user);
                 } else {
@@ -123,11 +128,13 @@ public class ShowOrderServlet extends HttpServlet {
     }
 
     private void displayCountPage(HttpServletRequest req, HttpServletResponse res, int count) throws IOException {
+        System.out.println(count + " Pages");
+
         PrintWriter out = res.getWriter();
         out.println("<p>");
 
         int i = 0;
-        while (i <= count) {
+        while (i < count) {
             out.print("<a href='" + res.encodeURL(req.getContextPath() + "/ShowOrderServlet?page=") + (i + 1)
                     + "'> " + (i + 1) + " </a>");
             i++;
@@ -142,6 +149,16 @@ public class ShowOrderServlet extends HttpServlet {
         out.println("<form method='GET' action='" + res.encodeURL(req.getContextPath() + "/Login") + "'>");
         out.println("<input type='submit' name='Logout' value='Logout'>");
         out.println("</form>");
+
+        // ServletContext
+        ServletContext Context = getServletContext();
+        int total = (int) Context.getAttribute("total");
+        int logged = (int) Context.getAttribute("logged");
+        int guest = (int) Context.getAttribute("guest");
+        out.println("<p>Guest  " + guest + "</p>");
+        out.println("<p>Logged " + logged + "</p>");
+        out.println("<p>Total  " + total + "</p>");
+
         out.println("</body></html>");
     }
 
@@ -192,6 +209,18 @@ public class ShowOrderServlet extends HttpServlet {
 
         out.println("</table></p>");
         out.println("Click <a href='" + res.encodeURL(req.getRequestURI() + "?page=" + currentPage) + "'>here</a> to reload this page.<br>");
+    }
+
+    /**
+     * 增加已经登录的人数和总人数
+     */
+    private void increaseCounter() {
+        ServletContext Context = getServletContext();
+        int total = (int) Context.getAttribute("total");
+        int logged = (int) Context.getAttribute("logged");
+        System.out.println("show servlet total = " + total);
+        Context.setAttribute("logged", ++logged);
+        Context.setAttribute("total", ++total);
     }
 
 }

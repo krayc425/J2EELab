@@ -2,31 +2,17 @@ package filter;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebFilter(
-        urlPatterns = "/*"
-//        filterName = "CharacterEncodingFilter",
-//        initParams = {
-//                @WebInitParam(name = "encoding", value = "utf-8")
-//        }
-)
+@WebFilter(urlPatterns = "/*")
 public class CharacterEncodingFilter implements Filter {
 
-    /**
-     * 编码格式
-     */
-    private String encoding;
-
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
 
     }
 
-    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         //1 设置编码格式
@@ -38,7 +24,6 @@ public class CharacterEncodingFilter implements Filter {
         chain.doFilter(request, response);
     }
 
-    @Override
     public void destroy() {
 
     }

@@ -2,6 +2,7 @@ package servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
@@ -21,9 +22,26 @@ public class Login extends HttpServlet {
         String login = "";
         HttpSession session = request.getSession(false);
 
-        // Logout action removes session, but the cookie remains
-        if (session != null) {
-            session.invalidate();
+        // ServletContext
+        ServletContext context = getServletContext();
+        int total = (int) context.getAttribute("total");
+        int logged = (int) context.getAttribute("logged");
+        int guest = (int) context.getAttribute("guest");
+
+        // 不是退出，游客人数加1
+        if (null == request.getParameter("Logout")) {
+            System.out.println("guest++\n");
+            context.setAttribute("guest", ++guest);
+            context.setAttribute("total", ++total);
+
+            //用户退出，减去登录人数
+        } else {
+            if (null != session) {
+                context.setAttribute("logged", --logged);
+                context.setAttribute("total", ++total);
+
+                session.invalidate();
+            }
         }
 
         Cookie[] cookies = request.getCookies();
@@ -32,6 +50,7 @@ public class Login extends HttpServlet {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("LoginCookie")) {
                     login = cookie.getValue();
+                    break;
                 }
             }
         }
@@ -45,6 +64,11 @@ public class Login extends HttpServlet {
         out.println("login: <input type='text' name='username' value='" + login + "'>");
         out.println("password: <input type='password' name='password' value=''>");
         out.println("<input type='submit' name='Submit' value='Submit'>");
+
+        out.println("<p>Guest  " + guest + "</p>");
+        out.println("<p>Logged " + logged + "</p>");
+        out.println("<p>Total  " + total + "</p>");
+
         out.println("</form></body></html>");
     }
 

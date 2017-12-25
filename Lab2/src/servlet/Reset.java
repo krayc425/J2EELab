@@ -22,4 +22,5 @@ public class Reset extends HttpServlet {
             session.invalidate();
         }
     }
+    
 }

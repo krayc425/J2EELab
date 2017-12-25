@@ -100,7 +100,7 @@ public class Order implements Serializable {
             e.printStackTrace();
         }
 
-        return count / PAGE_SIZE;
+        return count / PAGE_SIZE + (count % PAGE_SIZE == 0 ? 0 : 1);
     }
 
     public static ArrayList<Order> getListOrderByUsernameAndPage(String username, int page) {

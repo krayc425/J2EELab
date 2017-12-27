@@ -4,6 +4,10 @@ import util.FileHelper;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebListener;
+import javax.servlet.http.HttpSessionAttributeListener;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.List;
@@ -16,16 +20,9 @@ import java.util.List;
  * 而javax.servlet.ServletContext接口就提供了访问这个背景对象的途径。
  */
 @WebListener
-public class CounterListener implements ServletContextListener, ServletContextAttributeListener {
+public class CounterListener implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener {
 
-    //总人数
-    private int total;
-
-    //已经登录
-    private int logged;
-
-    //游客人数
-    private int guest;
+    private ServletContext servletContext;
 
     private String counterFilePath = "/Users/Kray/Documents/Software Engineering/J2EE/Lab/Lab2/web/data/counter.txt";
 
@@ -36,73 +33,67 @@ public class CounterListener implements ServletContextListener, ServletContextAt
      */
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         try {
-            //读取本地文件信息
-            System.out.println("Reading Start");
             List<String> input = FileHelper.readTxtFileLines(counterFilePath);
-            assert input.size() == 3 : "存储人数的文件格式错误, 应该是3行数字";
-            String loggedString = input.get(0);
-            String guestString = input.get(1);
-            String totalString = input.get(2);
-
-            //获取人数
-            this.logged = Integer.parseInt(loggedString);
-            this.guest = Integer.parseInt(guestString);
-            this.total = Integer.parseInt(totalString);
+            assert input.size() == 2 : "存储人数的文件格式错误, 应该是 2 行数字";
+            servletContext = servletContextEvent.getServletContext();
+            servletContext.setAttribute("logged", Integer.parseInt(input.get(0)));
+            servletContext.setAttribute("guest", Integer.parseInt(input.get(1)));
         } catch (Exception e) {
-            System.out.println(e.toString());
+            e.printStackTrace();
         }
-        //设置属性
-        ServletContext servletContext = servletContextEvent.getServletContext();
-        servletContext.setAttribute("logged", this.logged);
-        servletContext.setAttribute("guest", this.guest);
-        servletContext.setAttribute("total", this.total);
-
-        System.out.println("logged=" + logged + ", guest=" + guest + ", total=" + total);
-        System.out.println("Application initialized");
     }
 
-    public void attributeAdded(ServletContextAttributeEvent servletContextAttributeEvent) {
-        System.out.println("ServletContext attribute added");
+    public void sessionCreated(HttpSessionEvent sessionEvent) {
+        System.out.println("Create Session");
+        servletContext.setAttribute("guest", ((int) servletContext.getAttribute("guest")) + 1);
+        writeCounter(sessionEvent.getSession().getServletContext());
     }
 
-    public void attributeReplaced(ServletContextAttributeEvent servletContextAttributeEvent) {
-        System.out.println("ServletContext attribute replaced");
-        writeCounter(servletContextAttributeEvent);
+    public void sessionDestroyed(HttpSessionEvent sessionEvent) {
+        System.out.println("Destroy Session");
+        servletContext.setAttribute("guest", ((int) servletContext.getAttribute("guest")) - 1);
+        writeCounter(sessionEvent.getSession().getServletContext());
     }
 
-    public void attributeRemoved(ServletContextAttributeEvent servletContextAttributeEvent) {
-        System.out.println("ServletContext attribute removed");
+    public void attributeAdded(HttpSessionBindingEvent se) {
+        System.out.println("HttpSessionBindingEvent Added Name " + se.getName());
+        if (se.getName().equals("username")) {
+            servletContext.setAttribute("guest", ((int) servletContext.getAttribute("guest")) - 1);
+            servletContext.setAttribute("logged", ((int) servletContext.getAttribute("logged") + 1));
+            writeCounter(se.getSession().getServletContext());
+        }
+    }
+
+    public void attributeRemoved(HttpSessionBindingEvent se) {
+        System.out.println("HttpSessionBindingEvent Removed Name " + se.getName());
+        if (se.getName().equals("username")) {
+            servletContext.setAttribute("guest", ((int) servletContext.getAttribute("guest")) + 1);
+            servletContext.setAttribute("logged", ((int) servletContext.getAttribute("logged") - 1));
+            writeCounter(se.getSession().getServletContext());
+        }
+    }
+
+    public void attributeReplaced(HttpSessionBindingEvent se) {
     }
 
     public void contextDestroyed(ServletContextEvent arg0) {
-        System.out.println("Application shut down");
     }
 
     /**
      * 控制并发
-     * 保证在同一时刻最多只有一个线程执行该段代码
-     * 当一个线程访问object的一个synchronized(this)同步代码块时，它就获得了这个object的对象锁。
-     * 其它线程对该object对象所有同步代码部分的访问都被暂时阻塞。
      *
-     * @param servletContextAttributeEvent
+     * @param servletContext 上下文
      */
-    private synchronized void writeCounter(ServletContextAttributeEvent servletContextAttributeEvent) {
-        ServletContext servletContext = servletContextAttributeEvent.getServletContext();
-        this.guest = (int) servletContext.getAttribute("guest");
-        this.logged = (int) servletContext.getAttribute("logged");
-        this.total = (int) servletContext.getAttribute("total");
+    private synchronized void writeCounter(ServletContext servletContext) {
         //写入新的数据
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(counterFilePath));
-            writer.write(Integer.toString(this.logged));
+            writer.write(Integer.toString((int) servletContext.getAttribute("logged")));
             writer.write("\n");
-            writer.write(Integer.toString(this.guest));
-            writer.write("\n");
-            writer.write(Integer.toString(this.total));
+            writer.write(Integer.toString((int) servletContext.getAttribute("guest")));
             writer.close();
-            System.out.println("Writing");
         } catch (Exception e) {
-            System.out.println(e.toString());
+            e.printStackTrace();
         }
     }
 

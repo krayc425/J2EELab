@@ -1,6 +1,5 @@
 package servlet;
 
-import com.sun.tools.corba.se.idl.constExpr.Or;
 import model.Order;
 import model.User;
 
@@ -33,14 +32,13 @@ public class ShowOrderServlet extends HttpServlet {
         resp.setContentType("text/html;charset=utf-8");
         req.setCharacterEncoding("UTF-8");
 
-        HttpSession session = req.getSession(false);
+        req.getSession().invalidate();
 
         Cookie cookie = null;
         Cookie[] cookies = req.getCookies();
         if (null != cookies) {
             // Look through all the cookies and see if the
             // cookie with the login info is there.
-
             for (Cookie c : cookies) {
                 if (c.getName().equals("LoginCookie")) {
                     cookie = c;
@@ -49,68 +47,55 @@ public class ShowOrderServlet extends HttpServlet {
             }
         }
 
-        if (session == null) {
-            String usernameValue = req.getParameter("username");
-            String passwordValue = req.getParameter("password");
+        String usernameValue = req.getParameter("username");
+        String passwordValue = req.getParameter("password");
 
-            boolean isLoginAction = null != usernameValue;
+        boolean isLoginAction = null != usernameValue;
 
-            System.out.println(usernameValue + " session null");
-
-            if (isLoginAction) { // model.User is logging in
-
-                User user = User.getUser(usernameValue, passwordValue);
-
-                if (user != null) {
-                    // 登陆成功，人数+1
-                    this.increaseCounter();
-
-                    if (cookie != null) { // If the cookie exists update the value only
-                        // if changed
-                        if (!usernameValue.equals(cookie.getValue())) {
-                            cookie.setValue(usernameValue);
-                            resp.addCookie(cookie);
-                        }
-                    } else {
-                        // If the cookie does not exist, create it and set value
-                        cookie = new Cookie("LoginCookie", usernameValue);
-                        cookie.setMaxAge(0);
-                        System.out.println("Add cookie");
-                        resp.addCookie(cookie);
-                    }
-
-                    // create a session to show that we are logged in
-                    session = req.getSession(true);
-                    session.setAttribute("username", usernameValue);
-                    session.setAttribute("password", passwordValue);
-
-                    req.setAttribute("username", usernameValue);
-                    req.setAttribute("password", passwordValue);
-
-
-                    setOrderListPage(req, resp, user);
-                } else {
-                    // Error page
-                    displayErrorPage(req, resp);
-                }
-            } else {
-                // Display the login page. If the cookie exists, set login
-                resp.sendRedirect(req.getContextPath() + "/Login");
-            }
-        } else {
-            String usernameValue = (String) session.getAttribute("username");
-            String passwordValue = (String) session.getAttribute("password");
-
-            System.out.println(usernameValue + ", " + passwordValue);
+        if (isLoginAction) { // model.User is logging in
 
             User user = User.getUser(usernameValue, passwordValue);
-            req.setAttribute("username", usernameValue);
-            req.setAttribute("password", passwordValue);
+            if (user != null) {
+                // 登陆成功，人数+1
+                if (cookie != null) { // If the cookie exists update the value only
+                    // if changed
+                    if (!usernameValue.equals(cookie.getValue())) {
+                        cookie.setValue(usernameValue);
+                        resp.addCookie(cookie);
+                    }
+                } else {
+                    // If the cookie does not exist, create it and set value
+                    cookie = new Cookie("LoginCookie", usernameValue);
+                    cookie.setMaxAge(0);
+                    resp.addCookie(cookie);
+                }
 
-            setOrderListPage(req, resp, user);
+                // create a session to show that we are logged in
+                HttpSession session = req.getSession(true);
+                session.setAttribute("username", usernameValue);
+                session.setAttribute("password", passwordValue);
+
+                req.setAttribute("username", usernameValue);
+                req.setAttribute("password", passwordValue);
+
+                setOrderListPage(req, resp, user);
+            } else {
+                // Error page
+                displayErrorPage(req, resp);
+            }
+        } else {
+            // Display the login page. If the cookie exists, set login
+            resp.sendRedirect(req.getContextPath() + "/Login");
         }
     }
 
+    /**
+     * 设置订单页
+     *
+     * @param req
+     * @param res
+     * @param user
+     */
     private void setOrderListPage(HttpServletRequest req, HttpServletResponse res, User user) {
         try {
             currentPage = Integer.parseInt(req.getParameter("page"));
@@ -127,9 +112,15 @@ public class ShowOrderServlet extends HttpServlet {
         }
     }
 
+    /**
+     * 页数按钮
+     *
+     * @param req
+     * @param res
+     * @param count
+     * @throws IOException
+     */
     private void displayCountPage(HttpServletRequest req, HttpServletResponse res, int count) throws IOException {
-        System.out.println(count + " Pages");
-
         PrintWriter out = res.getWriter();
         out.println("<p>");
 
@@ -143,6 +134,13 @@ public class ShowOrderServlet extends HttpServlet {
         out.println("</p>");
     }
 
+    /**
+     * 增加登出按钮和人数
+     *
+     * @param req
+     * @param res
+     * @throws IOException
+     */
     private void displayLogoutPage(HttpServletRequest req, HttpServletResponse res) throws IOException {
         PrintWriter out = res.getWriter();
 
@@ -152,16 +150,22 @@ public class ShowOrderServlet extends HttpServlet {
 
         // ServletContext
         ServletContext Context = getServletContext();
-        int total = (int) Context.getAttribute("total");
         int logged = (int) Context.getAttribute("logged");
         int guest = (int) Context.getAttribute("guest");
         out.println("<p>Guest  " + guest + "</p>");
         out.println("<p>Logged " + logged + "</p>");
-        out.println("<p>Total  " + total + "</p>");
+        out.println("<p>Total  " + (logged + guest) + "</p>");
 
         out.println("</body></html>");
     }
 
+    /**
+     * 错误页面
+     *
+     * @param req
+     * @param res
+     * @throws IOException
+     */
     private void displayErrorPage(HttpServletRequest req, HttpServletResponse res) throws IOException {
         PrintWriter out = res.getWriter();
         out.println("<html><body>");
@@ -171,11 +175,17 @@ public class ShowOrderServlet extends HttpServlet {
 
         HttpSession session = req.getSession();
         if (null != session) {
-            System.out.println("session is not null, reseting");
             session.invalidate();
         }
     }
 
+    /**
+     * 订单列表界面
+     *
+     * @param req
+     * @param res
+     * @throws IOException
+     */
     private void displayOrderListPage(HttpServletRequest req, HttpServletResponse res) throws IOException {
         ArrayList<Order> list = (ArrayList<Order>) req.getAttribute("list");
 
@@ -209,18 +219,6 @@ public class ShowOrderServlet extends HttpServlet {
 
         out.println("</table></p>");
         out.println("Click <a href='" + res.encodeURL(req.getRequestURI() + "?page=" + currentPage) + "'>here</a> to reload this page.<br>");
-    }
-
-    /**
-     * 增加已经登录的人数和总人数
-     */
-    private void increaseCounter() {
-        ServletContext Context = getServletContext();
-        int total = (int) Context.getAttribute("total");
-        int logged = (int) Context.getAttribute("logged");
-        System.out.println("show servlet total = " + total);
-        Context.setAttribute("logged", ++logged);
-        Context.setAttribute("total", ++total);
     }
 
 }

@@ -18,9 +18,9 @@ public class Reset extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
         if (null != session) {
-            System.out.println("session is not null, reseting");
             session.invalidate();
         }
+        resp.sendRedirect("/Login");
     }
     
 }

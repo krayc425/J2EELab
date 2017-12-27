@@ -32,8 +32,6 @@ public class ShowOrderServlet extends HttpServlet {
         resp.setContentType("text/html;charset=utf-8");
         req.setCharacterEncoding("UTF-8");
 
-        req.getSession().invalidate();
-
         Cookie cookie = null;
         Cookie[] cookies = req.getCookies();
         if (null != cookies) {
@@ -125,10 +123,9 @@ public class ShowOrderServlet extends HttpServlet {
         out.println("<p>");
 
         int i = 0;
-        while (i < count) {
+        while (i++ < count) {
             out.print("<a href='" + res.encodeURL(req.getContextPath() + "/ShowOrderServlet?page=") + (i + 1)
                     + "'> " + (i + 1) + " </a>");
-            i++;
         }
 
         out.println("</p>");

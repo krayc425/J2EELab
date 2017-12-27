@@ -20,9 +20,10 @@ public class Login extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        if (request.getParameter("Logout") != null || session != null) {
+        if (request.getParameter("Logout") != null) {
             session.invalidate();
         }
+        session = request.getSession(true);
 
         String login = "";
         Cookie[] cookies = request.getCookies();
@@ -57,7 +58,6 @@ public class Login extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // TODO Auto-generated method stub
     }
 
 }

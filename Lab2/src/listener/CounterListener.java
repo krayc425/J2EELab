@@ -46,13 +46,13 @@ public class CounterListener implements ServletContextListener, HttpSessionListe
     public void sessionCreated(HttpSessionEvent sessionEvent) {
         System.out.println("Create Session");
         servletContext.setAttribute("guest", ((int) servletContext.getAttribute("guest")) + 1);
-        writeCounter(sessionEvent.getSession().getServletContext());
+        writeCounter(servletContext);
     }
 
     public void sessionDestroyed(HttpSessionEvent sessionEvent) {
         System.out.println("Destroy Session");
         servletContext.setAttribute("guest", ((int) servletContext.getAttribute("guest")) - 1);
-        writeCounter(sessionEvent.getSession().getServletContext());
+        writeCounter(servletContext);
     }
 
     public void attributeAdded(HttpSessionBindingEvent se) {
@@ -60,7 +60,7 @@ public class CounterListener implements ServletContextListener, HttpSessionListe
         if (se.getName().equals("username")) {
             servletContext.setAttribute("guest", ((int) servletContext.getAttribute("guest")) - 1);
             servletContext.setAttribute("logged", ((int) servletContext.getAttribute("logged") + 1));
-            writeCounter(se.getSession().getServletContext());
+            writeCounter(servletContext);
         }
     }
 
@@ -69,7 +69,7 @@ public class CounterListener implements ServletContextListener, HttpSessionListe
         if (se.getName().equals("username")) {
             servletContext.setAttribute("guest", ((int) servletContext.getAttribute("guest")) + 1);
             servletContext.setAttribute("logged", ((int) servletContext.getAttribute("logged") - 1));
-            writeCounter(se.getSession().getServletContext());
+            writeCounter(servletContext);
         }
     }
 
@@ -85,7 +85,6 @@ public class CounterListener implements ServletContextListener, HttpSessionListe
      * @param servletContext 上下文
      */
     private synchronized void writeCounter(ServletContext servletContext) {
-        //写入新的数据
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(counterFilePath));
             writer.write(Integer.toString((int) servletContext.getAttribute("logged")));

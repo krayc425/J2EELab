@@ -25,39 +25,11 @@ public class Login extends HttpServlet {
         }
         session = request.getSession(true);
 
-        String login = "";
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("LoginCookie")) {
-                    login = cookie.getValue();
-                    break;
-                }
-            }
-        }
-
-        ServletContext context = getServletContext();
-        int logged = (int) context.getAttribute("logged");
-        int guest = (int) context.getAttribute("guest");
-
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        out.println("<html><body>");
-        out.println("<form method='POST' action='"
-                + response.encodeURL(request.getContextPath() + "/ShowOrderServlet?page=1")
-                + "'>");
-        out.println("login: <input type='text' name='username' value='" + login + "'>");
-        out.println("password: <input type='password' name='password' value=''>");
-        out.println("<input type='submit' name='Submit' value='Submit'>");
-
-        out.println("<p>Guest  " + guest + "</p>");
-        out.println("<p>Logged " + logged + "</p>");
-        out.println("<p>Total  " + (logged + guest) + "</p>");
-
-        out.println("</form></body></html>");
+        request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
     }
 
 }

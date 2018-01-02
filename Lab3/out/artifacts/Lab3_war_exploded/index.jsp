@@ -1,6 +1,6 @@
 <%--
   Created by IntelliJ IDEA.
-  model.User: Kray
+  User: Kray
   Date: 2017/12/13
   Time: 20:20
   To change this template use File | Settings | File Templates.
@@ -10,7 +10,7 @@
 <head>
     <title>Lab3</title>
 </head>
-Hello J2EELab3!
 <body>
+Hello J2EELab3!
 </body>
 </html>

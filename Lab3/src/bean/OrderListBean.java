@@ -18,5 +18,5 @@ public class OrderListBean implements Serializable {
     public void setOrderList(List<Order> orderList) {
         this.orderList = orderList;
     }
-    
+
 }

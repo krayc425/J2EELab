@@ -6,19 +6,14 @@ import model.User;
 import service.OrderService;
 import service.UserService;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/ShowOrderServlet")
 public class ShowOrderServlet extends HttpServlet {
-
-    private int currentPage;
 
     private OrderService orderService;
     private UserService userService;
@@ -38,9 +33,6 @@ public class ShowOrderServlet extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setContentType("text/html;charset=utf-8");
-        req.setCharacterEncoding("UTF-8");
-
         Cookie cookie = null;
         Cookie[] cookies = req.getCookies();
         if (null != cookies) {
@@ -57,9 +49,17 @@ public class ShowOrderServlet extends HttpServlet {
         String usernameValue = req.getParameter("username");
         String passwordValue = req.getParameter("password");
 
+        if (usernameValue == null || usernameValue.equals("")) {
+            usernameValue = (String) req.getAttribute("username");
+        }
+        if (passwordValue == null || passwordValue.equals("")) {
+            passwordValue = (String) req.getAttribute("password");
+        }
+        System.out.println("Username " + usernameValue + " Password " + passwordValue);
+
         boolean isLoginAction = null != usernameValue;
 
-        if (isLoginAction) { // model.User is logging in
+        if (req.getSession() != null) { // User is logging in
 
             User user = userService.findUser(usernameValue, passwordValue);
             if (user != null) {
@@ -105,65 +105,18 @@ public class ShowOrderServlet extends HttpServlet {
      */
     private void setOrderListPage(HttpServletRequest req, HttpServletResponse res, User user) {
         try {
-            currentPage = Integer.parseInt(req.getParameter("page"));
+            int count = orderService.getListOrderPageCountByUsername(user.getUsername());
 
-            List<Order> orders = orderService.getListOrderByUsernameAndPage(user.getUsername(), currentPage);
+            System.out.println("Set Order List Page " + count);
+
+            List<Order> orders = orderService.getListOrderByUsernameAndPage(user.getUsername(), Integer.parseInt(req.getParameter("page")));
             req.setAttribute("list", orders);
+            req.setAttribute("totalNumber", count);
 
             displayOrderListPage(req, res);
-
-            displayCountPage(req, res, orderService.getListOrderPageCountByUsername(user.getUsername()));
-
-            displayLogoutPage(req, res);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * 页数按钮
-     *
-     * @param req
-     * @param res
-     * @param count
-     * @throws IOException
-     */
-    private void displayCountPage(HttpServletRequest req, HttpServletResponse res, int count) throws IOException {
-        PrintWriter out = res.getWriter();
-        out.println("<p>");
-
-        int i = 0;
-        while (i++ < count) {
-            out.print("<a href='" + res.encodeURL(req.getContextPath() + "/ShowOrderServlet?page=") + (i + 1)
-                    + "'> " + (i + 1) + " </a>");
-        }
-
-        out.println("</p>");
-    }
-
-    /**
-     * 增加登出按钮和人数
-     *
-     * @param req
-     * @param res
-     * @throws IOException
-     */
-    private void displayLogoutPage(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        PrintWriter out = res.getWriter();
-
-        out.println("<form method='GET' action='" + res.encodeURL(req.getContextPath() + "/Login") + "'>");
-        out.println("<input type='submit' name='Logout' value='Logout'>");
-        out.println("</form>");
-
-        // ServletContext
-        ServletContext Context = getServletContext();
-        int logged = (int) Context.getAttribute("logged");
-        int guest = (int) Context.getAttribute("guest");
-        out.println("<p>Guest  " + guest + "</p>");
-        out.println("<p>Logged " + logged + "</p>");
-        out.println("<p>Total  " + (logged + guest) + "</p>");
-
-        out.println("</body></html>");
     }
 
     /**
@@ -174,15 +127,14 @@ public class ShowOrderServlet extends HttpServlet {
      * @throws IOException
      */
     private void displayErrorPage(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        PrintWriter out = res.getWriter();
-        out.println("<html><body>");
-        out.println("<p>Wrong username and password!</p>");
-        out.println("<input type='button' name='Back' value='Back' onclick='javascript:history.back()'>");
-        out.println("</body></html>");
-
-        HttpSession session = req.getSession();
-        if (null != session) {
-            session.invalidate();
+        try {
+            req.getRequestDispatcher("/warning.jsp").forward(req, res);
+            HttpSession session = req.getSession();
+            if (null != session) {
+                session.invalidate();
+            }
+        } catch (ServletException e) {
+            e.printStackTrace();
         }
     }
 
@@ -194,38 +146,11 @@ public class ShowOrderServlet extends HttpServlet {
      * @throws IOException
      */
     private void displayOrderListPage(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        ArrayList<Order> list = (ArrayList<Order>) req.getAttribute("list");
-
-        PrintWriter out = res.getWriter();
-        out.println("<html><body>");
-        out.println("<p>Welcome " + req.getAttribute("username") + "</p>");
-        out.println("<p>订单列表: </p><table>");
-        out.println("<tr>");
-        out.println("<td>" + "Id" + "</td>");
-        out.println("<td>" + "Time" + "</td>");
-        out.println("<td>" + "Name " + "</td>");
-        out.println("<td>" + "Count" + "</td>");
-        out.println("<td>" + "Price" + "</td>");
-        out.println("<td>" + "Out of Stock" + "</td>");
-        out.println("</tr>");
-
-        list.forEach(
-                o -> {
-                    out.println("<tr>");
-                    out.println("<td>" + o.getOid() + "</td>");
-                    out.println("<td>" + o.getOrdertime() + "</td>");
-                    out.println("<td>" + o.getOrdername() + "</td>");
-                    out.println("<td>" + o.getOrdercount() + "</td>");
-                    out.println("<td>" + o.getOrderprice() + "</td>");
-                    if (o.isIsoutofstock()) {
-                        out.println("<td>" + "True" + "</td>");
-                    }
-                    out.println("</tr>");
-                }
-        );
-
-        out.println("</table></p>");
-        out.println("Click <a href='" + res.encodeURL(req.getRequestURI() + "?page=" + currentPage) + "'>here</a> to reload this page.<br>");
+        try {
+            req.getRequestDispatcher("/order.jsp").forward(req, res);
+        } catch (ServletException e) {
+            e.printStackTrace();
+        }
     }
 
 }

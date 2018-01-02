@@ -1,5 +1,6 @@
 package tag;
 
+import bean.OrderListBean;
 import model.Order;
 
 import javax.servlet.jsp.JspException;
@@ -12,12 +13,9 @@ public class OrderInfoHandler extends SimpleTagSupport {
 
     @Override
     public void doTag() throws JspException, IOException {
-        ArrayList<Order> orderArrayList = (ArrayList<Order>) getJspContext().findAttribute("list");
-
-        System.out.println("Order List " + orderArrayList);
-
+        OrderListBean orderListBean = (OrderListBean) getJspContext().findAttribute("list");
         JspWriter out = getJspContext().getOut();
-        orderArrayList.forEach(
+        orderListBean.getOrderList().forEach(
                 o -> {
                     try {
                         out.println("<tr>");

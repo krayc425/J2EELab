@@ -24,7 +24,7 @@ public class CounterListener implements ServletContextListener, HttpSessionListe
 
     private ServletContext servletContext;
 
-    private String counterFilePath = "/Users/Kray/Documents/Software Engineering/J2EE/Lab/Lab2/web/data/counter.txt";
+    private String counterFilePath = "/Users/Kray/Documents/Software Engineering/J2EE/Lab/Lab3/web/data/counter.txt";
 
     /**
      * 服务器启动

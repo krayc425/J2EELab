@@ -14,8 +14,6 @@
 </head>
 <body>
 
-<% String currentPage = request.getParameter("page"); %>
-
 <p>Welcome <%= request.getAttribute("username")%>!</p>
 <p>订单列表：</p>
 <table>
@@ -30,7 +28,16 @@
     <songkuixi:orderInfo/>
 </table>
 
-<songkuixi:pageNumber totalNumber="${pageContext.request.getAttribute('totalNumber')}"/>
+<p>
+    <%
+        int i = 0;
+        while (i < (int) session.getAttribute("totalNumber")) {
+            out.print("<a href='" + response.encodeURL(request.getContextPath() + "/ShowOrderServlet?page=") + (i + 1)
+                    + "'> " + (i + 1) + " </a>");
+            i++;
+        }
+    %>
+</p>
 
 <form method="get" action="${pageContext.request.contextPath}/Login">
     <input type="submit" name="Logout" value="Logout">

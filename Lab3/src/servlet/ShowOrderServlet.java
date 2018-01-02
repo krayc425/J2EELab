@@ -1,7 +1,7 @@
 package servlet;
 
+import bean.OrderListBean;
 import factory.ServiceFactory;
-import model.Order;
 import model.User;
 import service.OrderService;
 import service.UserService;
@@ -10,7 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
-import java.util.List;
 
 @WebServlet("/ShowOrderServlet")
 public class ShowOrderServlet extends HttpServlet {
@@ -36,8 +35,6 @@ public class ShowOrderServlet extends HttpServlet {
         Cookie cookie = null;
         Cookie[] cookies = req.getCookies();
         if (null != cookies) {
-            // Look through all the cookies and see if the
-            // cookie with the login info is there.
             for (Cookie c : cookies) {
                 if (c.getName().equals("LoginCookie")) {
                     cookie = c;
@@ -46,21 +43,20 @@ public class ShowOrderServlet extends HttpServlet {
             }
         }
 
+        HttpSession session = req.getSession(false);
+
         String usernameValue = req.getParameter("username");
         String passwordValue = req.getParameter("password");
 
         if (usernameValue == null || usernameValue.equals("")) {
-            usernameValue = (String) req.getAttribute("username");
+            usernameValue = (String) session.getAttribute("username");
         }
         if (passwordValue == null || passwordValue.equals("")) {
-            passwordValue = (String) req.getAttribute("password");
+            passwordValue = (String) session.getAttribute("password");
         }
         System.out.println("Username " + usernameValue + " Password " + passwordValue);
 
-        boolean isLoginAction = null != usernameValue;
-
-        if (req.getSession() != null) { // User is logging in
-
+        if (usernameValue != null) { // User is logging in
             User user = userService.findUser(usernameValue, passwordValue);
             if (user != null) {
                 // 登陆成功，人数+1
@@ -78,7 +74,7 @@ public class ShowOrderServlet extends HttpServlet {
                 }
 
                 // create a session to show that we are logged in
-                HttpSession session = req.getSession(true);
+                session = req.getSession(true);
                 session.setAttribute("username", usernameValue);
                 session.setAttribute("password", passwordValue);
 
@@ -107,11 +103,12 @@ public class ShowOrderServlet extends HttpServlet {
         try {
             int count = orderService.getListOrderPageCountByUsername(user.getUsername());
 
-            System.out.println("Set Order List Page " + count);
+            OrderListBean orderListBean = new OrderListBean();
+            orderListBean.setOrderList(orderService.getListOrderByUsernameAndPage(user.getUsername(), Integer.parseInt(req.getParameter("page"))));
+            req.setAttribute("list", orderListBean);
 
-            List<Order> orders = orderService.getListOrderByUsernameAndPage(user.getUsername(), Integer.parseInt(req.getParameter("page")));
-            req.setAttribute("list", orders);
-            req.setAttribute("totalNumber", count);
+            HttpSession session = req.getSession(false);
+            session.setAttribute("totalNumber", count);
 
             displayOrderListPage(req, res);
         } catch (IOException e) {

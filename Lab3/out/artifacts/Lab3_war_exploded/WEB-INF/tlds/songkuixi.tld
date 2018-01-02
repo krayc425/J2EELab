@@ -8,18 +8,6 @@
     <jsp-version>2.0</jsp-version>
     <short-name>Order</short-name>
 
-    <!--分页-->
-    <tag>
-        <name>pageNumber</name>
-        <tag-class>tag.PageHandler</tag-class>
-        <body-content>empty</body-content>
-        <attribute>
-            <name>totalNumber</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-    </tag>
-
     <!--登录人数计数器-->
     <tag>
         <name>counterNumber</name>

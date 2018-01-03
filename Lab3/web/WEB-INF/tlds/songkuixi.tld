@@ -22,4 +22,15 @@
         <body-content>empty</body-content>
     </tag>
 
+    <!--检查 Session 是否为空-->
+    <tag>
+        <name>checkSession</name>
+        <tag-class>tag.CheckSessionHandler</tag-class>
+        <attribute>
+            <name>response</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
 </taglib>

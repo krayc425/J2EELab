@@ -16,11 +16,12 @@ public class Reset extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
+        HttpSession session = req.getSession(true);
         if (null != session) {
             session.invalidate();
+            session = null;
         }
         resp.sendRedirect("/Login");
     }
-    
+
 }

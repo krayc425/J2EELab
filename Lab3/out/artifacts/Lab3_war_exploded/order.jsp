@@ -8,13 +8,20 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="songkuixi" uri="/WEB-INF/tlds/songkuixi.tld" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
+
 <html>
 <head>
     <title>Order List</title>
 </head>
 <body>
 
-<p>Welcome <%= request.getAttribute("username")%>!</p>
+<songkuixi:checkSession response="<%= response%>"/>
+
+<jsp:useBean id="list"
+             type="bean.OrderListBean"
+             scope="session"/>
+
+<p>Welcome <%= session.getAttribute("username")%>!</p>
 <p>订单列表：</p>
 <table>
     <tr>

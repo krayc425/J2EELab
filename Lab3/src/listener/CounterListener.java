@@ -38,6 +38,7 @@ public class CounterListener implements ServletContextListener, HttpSessionListe
             servletContext = servletContextEvent.getServletContext();
             servletContext.setAttribute("logged", Integer.parseInt(input.get(0)));
             servletContext.setAttribute("guest", Integer.parseInt(input.get(1)));
+            writeCounter(servletContext);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -45,35 +46,33 @@ public class CounterListener implements ServletContextListener, HttpSessionListe
 
     public void sessionCreated(HttpSessionEvent sessionEvent) {
         System.out.println("Create Session");
-        servletContext.setAttribute("guest", ((int) servletContext.getAttribute("guest")) + 1);
-        writeCounter(servletContext);
     }
 
     public void sessionDestroyed(HttpSessionEvent sessionEvent) {
         System.out.println("Destroy Session");
-        servletContext.setAttribute("guest", ((int) servletContext.getAttribute("guest")) - 1);
-        writeCounter(servletContext);
     }
 
     public void attributeAdded(HttpSessionBindingEvent se) {
         System.out.println("HttpSessionBindingEvent Added Name " + se.getName());
-        if (se.getName().equals("username")) {
-            servletContext.setAttribute("guest", ((int) servletContext.getAttribute("guest")) - 1);
-            servletContext.setAttribute("logged", ((int) servletContext.getAttribute("logged") + 1));
-            writeCounter(servletContext);
-        }
+//        if (se.getName().equals("username")) {
+//            servletContext.setAttribute("guest", ((int) servletContext.getAttribute("guest")) - 1);
+//            servletContext.setAttribute("logged", ((int) servletContext.getAttribute("logged") + 1));
+//            writeCounter(servletContext);
+//        }
     }
 
     public void attributeRemoved(HttpSessionBindingEvent se) {
         System.out.println("HttpSessionBindingEvent Removed Name " + se.getName());
-        if (se.getName().equals("username")) {
-            servletContext.setAttribute("guest", ((int) servletContext.getAttribute("guest")) + 1);
-            servletContext.setAttribute("logged", ((int) servletContext.getAttribute("logged") - 1));
-            writeCounter(servletContext);
-        }
+//        if (se.getName().equals("username")) {
+//            servletContext.setAttribute("guest", ((int) servletContext.getAttribute("guest")) + 1);
+//            servletContext.setAttribute("logged", ((int) servletContext.getAttribute("logged") - 1));
+//            writeCounter(servletContext);
+//        }
     }
 
     public void attributeReplaced(HttpSessionBindingEvent se) {
+        System.out.println("HttpSessionBindingEvent Replaced Name " + se.getName());
+        writeCounter(servletContext);
     }
 
     public void contextDestroyed(ServletContextEvent arg0) {

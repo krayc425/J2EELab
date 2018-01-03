@@ -1,13 +1,11 @@
 package tag;
 
 import bean.OrderListBean;
-import model.Order;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class OrderInfoHandler extends SimpleTagSupport {
 

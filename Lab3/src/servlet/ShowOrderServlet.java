@@ -45,50 +45,57 @@ public class ShowOrderServlet extends HttpServlet {
 
         HttpSession session = req.getSession(false);
 
-        String usernameValue = req.getParameter("username");
-        String passwordValue = req.getParameter("password");
+        if (session == null) {
+            resp.sendRedirect(req.getContextPath() + "/Login");
+        } else {
+            String usernameValue = (String) session.getAttribute("username");
+            String passwordValue = (String) session.getAttribute("password");
 
-        if (usernameValue == null || usernameValue.equals("")) {
-            usernameValue = (String) session.getAttribute("username");
-        }
-        if (passwordValue == null || passwordValue.equals("")) {
-            passwordValue = (String) session.getAttribute("password");
-        }
-        System.out.println("Username " + usernameValue + " Password " + passwordValue);
+            if (usernameValue == null || passwordValue == null || usernameValue.equals("") || passwordValue.equals("")) {
+                usernameValue = req.getParameter("username");
+                passwordValue = req.getParameter("password");
 
-        if (usernameValue != null) { // User is logging in
-            User user = userService.findUser(usernameValue, passwordValue);
-            if (user != null) {
-                // 登陆成功，人数+1
-                if (cookie != null) { // If the cookie exists update the value only
-                    // if changed
-                    if (!usernameValue.equals(cookie.getValue())) {
-                        cookie.setValue(usernameValue);
-                        resp.addCookie(cookie);
+                if (usernameValue != null) { // User is logging in
+                    User user = userService.findUser(usernameValue, passwordValue);
+                    if (user != null) {
+                        if (cookie != null) { // If the cookie exists update the value only
+                            // if changed
+                            if (!usernameValue.equals(cookie.getValue())) {
+                                cookie.setValue(usernameValue);
+                                resp.addCookie(cookie);
+                            }
+                        } else {
+                            // If the cookie does not exist, create it and set value
+                            cookie = new Cookie("LoginCookie", usernameValue);
+                            cookie.setMaxAge(0);
+                            resp.addCookie(cookie);
+                        }
+
+                        // create a session to show that we are logged in
+                        session = req.getSession(true);
+                        session.setAttribute("username", usernameValue);
+                        session.setAttribute("password", passwordValue);
+
+                        req.setAttribute("username", usernameValue);
+                        req.setAttribute("password", passwordValue);
+
+                        setOrderListPage(req, resp, user);
+                    } else {
+                        // Error page
+                        displayErrorPage(req, resp);
                     }
                 } else {
-                    // If the cookie does not exist, create it and set value
-                    cookie = new Cookie("LoginCookie", usernameValue);
-                    cookie.setMaxAge(0);
-                    resp.addCookie(cookie);
+                    // Display the login page. If the cookie exists, set login
+                    resp.sendRedirect(req.getContextPath() + "/Login");
                 }
-
-                // create a session to show that we are logged in
-                session = req.getSession(true);
-                session.setAttribute("username", usernameValue);
-                session.setAttribute("password", passwordValue);
+            } else {
+                User user = userService.findUser(usernameValue, passwordValue);
 
                 req.setAttribute("username", usernameValue);
                 req.setAttribute("password", passwordValue);
 
                 setOrderListPage(req, resp, user);
-            } else {
-                // Error page
-                displayErrorPage(req, resp);
             }
-        } else {
-            // Display the login page. If the cookie exists, set login
-            resp.sendRedirect(req.getContextPath() + "/Login");
         }
     }
 
@@ -101,14 +108,12 @@ public class ShowOrderServlet extends HttpServlet {
      */
     private void setOrderListPage(HttpServletRequest req, HttpServletResponse res, User user) {
         try {
-            int count = orderService.getListOrderPageCountByUsername(user.getUsername());
-
             OrderListBean orderListBean = new OrderListBean();
             orderListBean.setOrderList(orderService.getListOrderByUsernameAndPage(user.getUsername(), Integer.parseInt(req.getParameter("page"))));
             req.setAttribute("list", orderListBean);
 
             HttpSession session = req.getSession(false);
-            session.setAttribute("totalNumber", count);
+            session.setAttribute("totalNumber", orderService.getListOrderPageCountByUsername(user.getUsername()));
 
             displayOrderListPage(req, res);
         } catch (IOException e) {
@@ -126,10 +131,6 @@ public class ShowOrderServlet extends HttpServlet {
     private void displayErrorPage(HttpServletRequest req, HttpServletResponse res) throws IOException {
         try {
             req.getRequestDispatcher("/warning.jsp").forward(req, res);
-            HttpSession session = req.getSession();
-            if (null != session) {
-                session.invalidate();
-            }
         } catch (ServletException e) {
             e.printStackTrace();
         }

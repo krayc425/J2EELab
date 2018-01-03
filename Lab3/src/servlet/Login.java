@@ -20,7 +20,7 @@ public class Login extends HttpServlet {
         if (request.getParameter("Logout") != null) {
             session.invalidate();
         }
-        session = request.getSession(true);
+//        session = request.getSession(true);
 
         request.getRequestDispatcher("/login.jsp").forward(request, response);
     }

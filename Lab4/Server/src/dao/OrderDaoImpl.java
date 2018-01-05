@@ -37,7 +37,7 @@ public class OrderDaoImpl implements OrderDao {
 
             //关闭连接
             DatabaseConnection.close(result, stmt, connection);
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -73,7 +73,7 @@ public class OrderDaoImpl implements OrderDao {
 
             //关闭连接
             DatabaseConnection.close(result, stmt, connection);
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         //return result

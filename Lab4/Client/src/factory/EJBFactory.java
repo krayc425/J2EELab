@@ -6,6 +6,7 @@ import javax.naming.NamingException;
 import java.util.Hashtable;
 
 public class EJBFactory {
+
     public static Object getEJB(String beanName, String interfaceName) {
         Hashtable<String, String> jndiProperties = new Hashtable<>();
         jndiProperties.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
@@ -19,4 +20,5 @@ public class EJBFactory {
 
         return null;
     }
+
 }

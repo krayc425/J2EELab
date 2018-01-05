@@ -24,7 +24,7 @@ public class CounterListener implements ServletContextListener, HttpSessionListe
 
     private ServletContext servletContext;
 
-    private String counterFilePath = "/Users/Kray/Documents/Software Engineering/J2EE/Lab/Lab3/web/data/counter.txt";
+    private String counterFilePath = "/Users/Kray/Documents/Software Engineering/J2EE/Lab/Lab4/web/data/counter.txt";
 
     /**
      * 服务器启动
@@ -54,20 +54,10 @@ public class CounterListener implements ServletContextListener, HttpSessionListe
 
     public void attributeAdded(HttpSessionBindingEvent se) {
         System.out.println("HttpSessionBindingEvent Added Name " + se.getName());
-//        if (se.getName().equals("username")) {
-//            servletContext.setAttribute("guest", ((int) servletContext.getAttribute("guest")) - 1);
-//            servletContext.setAttribute("logged", ((int) servletContext.getAttribute("logged") + 1));
-//            writeCounter(servletContext);
-//        }
     }
 
     public void attributeRemoved(HttpSessionBindingEvent se) {
         System.out.println("HttpSessionBindingEvent Removed Name " + se.getName());
-//        if (se.getName().equals("username")) {
-//            servletContext.setAttribute("guest", ((int) servletContext.getAttribute("guest")) + 1);
-//            servletContext.setAttribute("logged", ((int) servletContext.getAttribute("logged") - 1));
-//            writeCounter(servletContext);
-//        }
     }
 
     public void attributeReplaced(HttpSessionBindingEvent se) {

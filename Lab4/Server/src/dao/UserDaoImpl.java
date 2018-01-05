@@ -38,7 +38,7 @@ public class UserDaoImpl implements UserDao {
             }
             //关闭连接
             DatabaseConnection.close(result, stmt, connection);
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         //return result

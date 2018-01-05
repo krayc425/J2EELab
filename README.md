@@ -35,6 +35,10 @@ Lab for J2EE and Middleware Technology.
         * 用户通过URL直接访问XXXServlet或XXX.JSP时
         
 ## Lab4：DAO:EJB + Service:EJB + JavaBean + Servlet + JSP
+
+* Service层：使用 EJB 技术
+* DAO层：使用 EJB 技术
+
 ## Lab5：DAO:EJB + Service:EJB + JPA + Servlet + JSP + Tag
 ## Lab6：Hibernate (Hibernate/Entity,DAO + Service + Servlet + JSP)
 ## Lab7：Spring (Hibernate/Entity + Spring/Service,DAO + Servlet + JSP)

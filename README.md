@@ -43,14 +43,23 @@ Lab for J2EE and Middleware Technology.
 
 ## Lab5：DAO:EJB + Service:EJB + JPA + Servlet + JSP + Tag
 
-* 修改作业 5 中数据访问层和 Model 的设计
-    * model
+* 修改 Lab4 中数据访问层和 Model 的设计
+    * Model
         * Entity Beans
-    * dao
+    * DAO
         * Session Beans
         * JPA EntityManager
 
 ## Lab6：Hibernate (Hibernate/Entity,DAO + Service + Servlet + JSP)
+
+* 修改 Lab3 中数据访问层和 Model 的设计
+    * Model
+        * Hibernate Entity Beans
+    * DAO
+        * Hibernate Session
+    * Service
+        * 不使用 EJB 技术
+
 ## Lab7：Spring (Hibernate/Entity + Spring/Service,DAO + Servlet + JSP)
 ## Lab8：Struts (Hibernate/Entity + Spring/Service,DAO + Struts/JSP)
 

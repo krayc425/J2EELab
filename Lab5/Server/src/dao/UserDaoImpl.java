@@ -2,15 +2,20 @@ package dao;
 
 import model.User;
 
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.*;
 
-@Stateless
 public class UserDaoImpl implements UserDao {
+
+    @PersistenceUnit(name = "J2EELab5JPA")
+    private EntityManagerFactory factory;
 
     @PersistenceContext
     private EntityManager em;
+
+    public UserDaoImpl() {
+        factory = Persistence.createEntityManagerFactory("J2EELab5JPA");
+        em = factory.createEntityManager();
+    }
 
     public User findUser(String username, String password) {
         User user = null;

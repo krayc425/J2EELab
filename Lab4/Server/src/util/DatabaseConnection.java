@@ -19,7 +19,6 @@ public class DatabaseConnection {
         return datasource.getConnection();
     }
 
-
     public static void close(ResultSet rs, PreparedStatement ps, Connection conn) throws SQLException {
         rs.close();
         ps.close();

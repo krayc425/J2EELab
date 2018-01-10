@@ -68,4 +68,5 @@ public class Order implements Serializable {
     public void setIsoutofstock(boolean isoutofstock) {
         this.isoutofstock = isoutofstock;
     }
+
 }

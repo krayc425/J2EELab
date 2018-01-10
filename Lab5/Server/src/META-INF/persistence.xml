@@ -5,9 +5,13 @@
     <persistence-unit name="J2EELab5JPA">
         <description>This unit manages users.</description>
         <jta-data-source>java:jboss/datasources/mysqlDS</jta-data-source>
+        <class>model.Order</class>
+        <class>model.User</class>
         <properties>
             <property name="showSql" value="true"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
+            <property name="hibernate.transaction.jta.platform"
+                      value="org.hibernate.service.jta.platform.internal.JBossAppServerJtaPlatform"/>
         </properties>
     </persistence-unit>
 </persistence>

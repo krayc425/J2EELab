@@ -36,8 +36,8 @@ Lab for J2EE and Middleware Technology.
         
 ## Lab4：DAO:EJB + Service:EJB + JavaBean + Servlet + JSP
 
-* Service层：使用 EJB 技术
-* DAO层：使用 EJB 技术
+* Service 层：使用 EJB 技术
+* DAO 层：使用 EJB 技术
 
 特别感谢：[J2EE第5次作业的坑，我帮你踩过了](https://samperson1997.github.io/2018/01/05/J2EE5/)
 
@@ -62,5 +62,4 @@ Lab for J2EE and Middleware Technology.
 
 ## Lab7：Spring (Hibernate/Entity + Spring/Service,DAO + Servlet + JSP)
 ## Lab8：Struts (Hibernate/Entity + Spring/Service,DAO + Struts/JSP)
-
 

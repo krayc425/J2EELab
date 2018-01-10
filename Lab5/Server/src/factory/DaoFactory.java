@@ -8,11 +8,11 @@ import dao.UserDaoImpl;
 public class DaoFactory {
 
     public static OrderDao getOrderDao() {
-        return (OrderDao) EJBFactory.getEJB("OrderDaoImpl", "dao.OrderDao");
+        return new OrderDaoImpl();
     }
 
     public static UserDao getUserDao() {
-        return (UserDao) EJBFactory.getEJB("UserDaoImpl", "dao.UserDao");
+        return new UserDaoImpl();
     }
 
 }

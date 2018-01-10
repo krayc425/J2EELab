@@ -17,7 +17,6 @@ public class EJBFactory {
         } catch (NamingException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 

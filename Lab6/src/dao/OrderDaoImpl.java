@@ -48,7 +48,6 @@ public class OrderDaoImpl implements OrderDao {
     public ArrayList<Order> getListOrderByUsernameAndPage(String username, int page) {
         ArrayList<Order> resultOrder = new ArrayList<>();
         try {
-
             Configuration config = new Configuration().configure();
             config.addAnnotatedClass(Order.class);
 

@@ -1,11 +1,7 @@
 package model;
 
-import util.DatabaseConnection;
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 

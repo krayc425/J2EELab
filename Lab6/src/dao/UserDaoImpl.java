@@ -6,12 +6,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-import util.DatabaseConnection;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class UserDaoImpl implements UserDao {
 

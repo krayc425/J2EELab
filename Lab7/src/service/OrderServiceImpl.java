@@ -1,24 +1,17 @@
 package service;
 
 import dao.OrderDao;
-import factory.DaoFactory;
 import model.Order;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public class OrderServiceImpl implements OrderService {
+@Service
+public class OrderServiceImpl implements service.OrderService {
 
+    @Autowired
     private OrderDao orderDao;
-
-    private static OrderServiceImpl orderService = new OrderServiceImpl();
-
-    public static OrderServiceImpl getInstance() {
-        return orderService;
-    }
-
-    public OrderServiceImpl() {
-        orderDao = DaoFactory.getOrderDao();
-    }
 
     public int getListOrderPageCountByUsername(String username) {
         return orderDao.getListOrderPageCountByUsername(username);

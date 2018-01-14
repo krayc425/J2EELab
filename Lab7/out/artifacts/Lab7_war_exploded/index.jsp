@@ -9,9 +9,9 @@
 <%@ page session="false" %>
 <html>
 <head>
-    <title>Lab6</title>
+    <title>Lab7</title>
 </head>
 <body>
-Hello J2EELab6!
+Hello J2EELab7!
 </body>
 </html>

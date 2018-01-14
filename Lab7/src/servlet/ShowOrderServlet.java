@@ -1,8 +1,9 @@
 package servlet;
 
 import bean.OrderListBean;
-import factory.ServiceFactory;
 import model.User;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import service.OrderService;
 import service.UserService;
 
@@ -20,8 +21,13 @@ public class ShowOrderServlet extends HttpServlet {
 
     public ShowOrderServlet() {
         super();
-        orderService = ServiceFactory.getOrderService();
-        userService = ServiceFactory.getUserService();
+    }
+
+    public void init() throws ServletException {
+        super.init();
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        userService = (UserService) applicationContext.getBean("userService");
+        orderService = (OrderService) applicationContext.getBean("orderService");
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

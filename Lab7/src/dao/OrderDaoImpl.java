@@ -2,33 +2,24 @@ package dao;
 
 import model.Order;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
-import org.hibernate.service.ServiceRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 
+@Repository
 public class OrderDaoImpl implements OrderDao {
 
-    private static OrderDaoImpl orderDao = new OrderDaoImpl();
-
-    public static OrderDaoImpl getInstance() {
-        return orderDao;
-    }
+    @Autowired
+    private BaseDao baseDao;
 
     private static int PAGE_SIZE = 2;
 
     public int getListOrderPageCountByUsername(String username) {
         int count = -1;
         try {
-            Configuration config = new Configuration().configure();
-            config.addAnnotatedClass(Order.class);
-
-            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(config.getProperties()).build();
-            SessionFactory sessionFactory = config.buildSessionFactory(serviceRegistry);
-            Session session = sessionFactory.openSession();
+            Session session = baseDao.getNewSession();
 
             String hql = "SELECT COUNT(o) FROM Order o WHERE username = ?1";
             Query query = session.createQuery(hql);
@@ -37,7 +28,6 @@ public class OrderDaoImpl implements OrderDao {
             count = (int) ((long) query.getResultList().get(0));
 
             session.close();
-            sessionFactory.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,12 +38,7 @@ public class OrderDaoImpl implements OrderDao {
     public ArrayList<Order> getListOrderByUsernameAndPage(String username, int page) {
         ArrayList<Order> resultOrder = new ArrayList<>();
         try {
-            Configuration config = new Configuration().configure();
-            config.addAnnotatedClass(Order.class);
-
-            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(config.getProperties()).build();
-            SessionFactory sessionFactory = config.buildSessionFactory(serviceRegistry);
-            Session session = sessionFactory.openSession();
+            Session session = baseDao.getNewSession();
 
             String hql = "SELECT o FROM Order o WHERE username = ?1";
             Query query = session.createQuery(hql);
@@ -66,7 +51,6 @@ public class OrderDaoImpl implements OrderDao {
             }
 
             session.close();
-            sessionFactory.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

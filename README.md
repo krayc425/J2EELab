@@ -61,5 +61,14 @@ Lab for J2EE and Middleware Technology.
         * 不使用 EJB 技术
 
 ## Lab7：Spring (Hibernate/Entity + Spring/Service,DAO + Servlet + JSP)
+
+* 修改 Lab6 中数据访问层和 Service 的设计
+    * Model
+        * Hibernate Entity Beans
+    * DAO
+        * Spring
+    * Service
+        * Spring
+
 ## Lab8：Struts (Hibernate/Entity + Spring/Service,DAO + Struts/JSP)
 

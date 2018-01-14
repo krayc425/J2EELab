@@ -1,0 +1,23 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" build-on-make="true" name="Lab7:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/Lab7_war_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="Lab7/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="Lab7" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="file-copy" path="$PROJECT_DIR$/web/WEB-INF/lib/jstl-1.2.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/web/WEB-INF/lib/servlet-api.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/web/WEB-INF/lib/standard-1.1.2.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/web/WEB-INF/lib/mysql-connector-java-5.1.45-bin.jar" />
+          <element id="library" level="project" name="jstl-1.2" />
+          <element id="library" level="project" name="mysql-connector-java-5.1.45-bin" />
+          <element id="library" level="project" name="standard-1.1.2" />
+          <element id="library" level="project" name="Hibernate 5.2.12-5.2.12" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

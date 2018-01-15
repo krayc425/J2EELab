@@ -16,7 +16,6 @@ public interface BaseDao {
 
     public Object load(Class c, String id);
 
-
     public List getAllList(Class c);
 
     public Long getTotalCount(Class c);

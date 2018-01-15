@@ -18,7 +18,7 @@
 <songkuixi:checkSession response="<%= response%>"/>
 
 <jsp:useBean id="list"
-             type="bean.OrderListBean"
+             type="action.business.OrderListBean"
              scope="session"/>
 
 <p>Welcome <%= session.getAttribute("username")%>!</p>

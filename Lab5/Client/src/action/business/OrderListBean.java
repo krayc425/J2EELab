@@ -1,4 +1,4 @@
-package bean;
+package action.business;
 
 import model.Order;
 

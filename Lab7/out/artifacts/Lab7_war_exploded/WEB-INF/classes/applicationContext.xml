@@ -38,7 +38,6 @@ http://www.springframework.org/schema/context/spring-context.xsd">
                 <prop key="hibernate.connection.autocommit">true</prop>
             </props>
         </property>
-
     </bean>
 
     <!--配置 TransactionManager-->
@@ -50,19 +49,14 @@ http://www.springframework.org/schema/context/spring-context.xsd">
     <!-- 定义 Autowired 自动注入 Bean -->
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
 
-    <!--&lt;!&ndash; 扫描有注解的文件 base-package 包路径 &ndash;&gt;-->
-    <!--<context:component-scan base-package="servlet"/>-->
-    <!--<context:component-scan base-package="dao"/>-->
-    <!--<context:component-scan base-package="servlet"/>-->
-
-    <!-- 声明式容器事务管理 ,transaction-manager指定事务管理器为transactionManager -->
+    <!-- 声明式容器事务管理, TransactionManager 指定事务管理器为 transactionManager -->
     <tx:advice id="txAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*User" propagation="REQUIRED"/>
             <tx:method name="*" propagation="NOT_SUPPORTED" read-only="true"/>
         </tx:attributes>
     </tx:advice>
-    <!-- 定义切面，在service包及子包中所有以Service结尾的方法中,执行有关的hibernate session的事务操作 -->
+    <!-- 定义切面，在 Service 包及子包中所有以 Service 结尾的方法中,执行有关的 Hibernate Session 的事务操作 -->
     <aop:config>
         <!-- 只对业务逻辑层实施事务 -->
         <aop:pointcut id="serviceOperation"

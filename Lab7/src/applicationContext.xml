@@ -38,7 +38,6 @@ http://www.springframework.org/schema/context/spring-context.xsd">
                 <prop key="hibernate.connection.autocommit">true</prop>
             </props>
         </property>
-
     </bean>
 
     <!--配置 TransactionManager-->

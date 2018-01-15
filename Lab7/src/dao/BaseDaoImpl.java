@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public class BaseDaoImpl implements BaseDao {
+
     /**
      * Autowired 自动装配 相当于get() set()
      */
@@ -70,7 +71,7 @@ public class BaseDaoImpl implements BaseDao {
     }
 
     /**
-     * 保存 * * @param bean *
+     * 保存 * * @param action *
      */
     public void save(Object bean) {
         try {
@@ -82,7 +83,7 @@ public class BaseDaoImpl implements BaseDao {
     }
 
     /**
-     * 更新 * * @param bean *
+     * 更新 * * @param action *
      */
     public void update(Object bean) {
         Session session = getNewSession();
@@ -93,10 +94,9 @@ public class BaseDaoImpl implements BaseDao {
     }
 
     /**
-     * 删除 * * @param bean *
+     * 删除 * * @param action *
      */
     public void delete(Object bean) {
-
         Session session = getNewSession();
         session.delete(bean);
         session.flush();

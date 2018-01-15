@@ -1,6 +1,6 @@
 package servlet;
 
-import bean.OrderListBean;
+import action.business.OrderListBean;
 import model.User;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

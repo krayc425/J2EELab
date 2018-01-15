@@ -62,7 +62,7 @@ public class Order implements Serializable {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(oid, ordertime, ordername, ordercount, orderprice, isoutofstock);
     }
+
 }

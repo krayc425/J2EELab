@@ -72,3 +72,14 @@ Lab for J2EE and Middleware Technology.
 
 ## Lab8：Struts (Hibernate/Entity + Spring/Service,DAO + Struts/JSP)
 
+* 修改 Lab7 中 Servlet 及 JSP
+    * Model
+        * Hibernate Entity Beans
+    * DAO
+        * Spring
+    * Service
+        * Spring
+    * Action
+        * Struts2
+
+

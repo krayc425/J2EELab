@@ -1,6 +1,6 @@
 package tag;
 
-import bean.OrderListBean;
+import action.business.OrderListBean;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;

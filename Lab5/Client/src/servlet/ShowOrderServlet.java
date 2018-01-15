@@ -1,6 +1,6 @@
 package servlet;
 
-import bean.OrderListBean;
+import action.business.OrderListBean;
 import factory.EJBFactory;
 import model.User;
 import service.OrderService;

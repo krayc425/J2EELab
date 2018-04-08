@@ -1,6 +1,8 @@
 # J2EELab
 
-Lab for J2EE and Middleware Technology.
+Lab & Notes for J2EE and Middleware Technology.
+
+# [期末复习](https://github.com/songkuixi/J2EELab/blob/master/Review.md)
 
 # 客户订单查询应用
 
